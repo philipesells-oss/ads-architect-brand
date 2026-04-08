@@ -8,18 +8,19 @@ import { Post7WhatsApp } from '@/components/instagram/Post7WhatsApp';
 import { Post8ReelCPB } from '@/components/instagram/Post8ReelCPB';
 import { Post9ROASvsCPB } from '@/components/instagram/Post9ROASvsCP';
 import { Post10ReelBali } from '@/components/instagram/Post10ReelBali';
+import { DownloadButton } from '@/components/instagram/DownloadButton';
 
-const posts: Record<string, React.ComponentType> = {
-  '1': Post1BeforeAfter,
-  '2': Post2AcquisitionStack,
-  '3': Post3QuoteCard,
-  '4': Post4ReelWhyAds,
-  '5': Post5GapAnalysis,
-  '6': Post6ReelSprint,
-  '7': Post7WhatsApp,
-  '8': Post8ReelCPB,
-  '9': Post9ROASvsCPB,
-  '10': Post10ReelBali,
+const posts: Record<string, { component: React.ComponentType; format: '1:1' | '9:16'; title: string }> = {
+  '1':  { component: Post1BeforeAfter,    format: '1:1',  title: 'Before/After Metrics Card' },
+  '2':  { component: Post2AcquisitionStack, format: '1:1', title: 'Acquisition Stack™ Diagram' },
+  '3':  { component: Post3QuoteCard,      format: '1:1',  title: 'Quote Card — Reports vs Reservations' },
+  '4':  { component: Post4ReelWhyAds,     format: '9:16', title: 'Reel — Why Your Ads Aren\'t Working' },
+  '5':  { component: Post5GapAnalysis,    format: '1:1',  title: '3 Critical Gaps Analysis' },
+  '6':  { component: Post6ReelSprint,     format: '9:16', title: 'Reel — Acquisition Sprint 14 Days' },
+  '7':  { component: Post7WhatsApp,       format: '1:1',  title: 'WhatsApp Automation — 200+ Reservations' },
+  '8':  { component: Post8ReelCPB,        format: '9:16', title: 'Reel — CPB $127→$48 Case Study' },
+  '9':  { component: Post9ROASvsCPB,      format: '1:1',  title: 'ROAS vs Cost Per Booking' },
+  '10': { component: Post10ReelBali,      format: '9:16', title: 'Reel — Built in Bali, Trusted Worldwide' },
 };
 
 export function generateStaticParams() {
@@ -27,36 +28,47 @@ export function generateStaticParams() {
 }
 
 export default function PostPage({ params }: { params: { id: string } }) {
-  const Component = posts[params.id];
-  if (!Component) return <div>Post not found</div>;
+  const post = posts[params.id];
+  if (!post) return <div>Post not found</div>;
+  const Component = post.component;
 
   return (
-    <div
-      style={{
-        background: '#000',
-        minHeight: '100vh',
+    <div style={{ background: '#050505', minHeight: '100vh', fontFamily: 'Inter, sans-serif', paddingBottom: 60 }}>
+      {/* Nav bar */}
+      <div style={{
+        padding: '20px 40px',
+        borderBottom: '1px solid #1A1A1A',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        padding: '40px 20px',
-        fontFamily: 'Inter, sans-serif',
-      }}
-    >
-      {/* Nav */}
-      <div style={{ width: '100%', maxWidth: 1200, display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
+        justifyContent: 'space-between',
+        background: '#050505',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+      }}>
         <a href="/instagram" style={{ color: '#A1A1AA', textDecoration: 'none', fontSize: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-          ← Back to gallery
+          ← Gallery
         </a>
-        <p style={{ color: '#A1A1AA', fontSize: 13, margin: 0 }}>
-          Post {params.id} · Right-click image → Save / DevTools → Capture node screenshot
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{ color: '#A1A1AA', fontSize: 13 }}>Post {params.id} · {post.format} · {post.title}</span>
+          <DownloadButton postId={params.id} format={post.format} />
+        </div>
       </div>
 
-      {/* Full-size post — rendered at actual Instagram resolution */}
-      <div id="post-export" style={{ display: 'inline-block', lineHeight: 0 }}>
-        <Component />
+      {/* Post rendered at full resolution */}
+      <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 48, paddingBottom: 48 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+          <div id="post-export" style={{ display: 'inline-block', lineHeight: 0, boxShadow: '0 0 80px rgba(0,212,170,0.08)' }}>
+            <Component />
+          </div>
+          {/* Download button below post too */}
+          <DownloadButton postId={params.id} format={post.format} />
+        </div>
       </div>
+
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }
