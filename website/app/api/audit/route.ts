@@ -6,7 +6,7 @@ const GHL_WEBHOOK_URL =
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { firstName, businessName, website, budget, challenge, email } = body;
+    const { firstName, businessName, website, budget, challenge, email, phone } = body;
 
     if (!firstName || !email) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
       firstName,
       companyName: businessName,
       email,
+      phone: phone || '',
       website,
       adBudget: budget,
       mainChallenge: challenge,

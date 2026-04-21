@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle2, Clock, FileText, Loader2, Video } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PhoneInput } from '@/components/ui/PhoneInput';
 
 const deliverables = [
   { icon: FileText, label: 'Ad Spend Waste Report', desc: 'Where your budget is leaking and why' },
@@ -23,6 +24,7 @@ const requirements = [
 export function AuditSection() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [phone, setPhone] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -37,6 +39,7 @@ export function AuditSection() {
       budget: (form.elements.namedItem('budget') as HTMLSelectElement).value,
       challenge: (form.elements.namedItem('challenge') as HTMLSelectElement).value,
       email: (form.elements.namedItem('email') as HTMLInputElement).value,
+      phone,
     };
 
     try {
@@ -221,6 +224,15 @@ export function AuditSection() {
                       required
                       placeholder="you@yourbusiness.com"
                       className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow placeholder-faint focus:outline-none focus:border-teal/50 transition-colors duration-200"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-caption text-muted mb-1.5 block">Phone Number *</label>
+                    <PhoneInput
+                      value={phone}
+                      onChange={setPhone}
+                      required
                     />
                   </div>
 
