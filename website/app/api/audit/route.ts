@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
       source: 'adsarchitect.agency',
       tags: ['audit-request', 'lead-site'],
       customFields: [
-        { key: 'contact.adbudget', field_value: budget || '' },
-        { key: 'contact.mainchallenge', field_value: challenge || '' },
+        { id: 'i9RhC0JUa8Hc914CqYye', field_value: budget || '' },
+        { id: 'IAP9sbutOyjmcnod4zKZ', field_value: challenge || '' },
       ],
     };
 
