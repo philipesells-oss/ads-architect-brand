@@ -12,16 +12,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Normalize phone to E.164 format (remove spaces, dashes, parens)
+    const normalizedPhone = phone ? phone.replace(/[\s\-().]/g, '') : '';
+
     const payload = {
       firstName,
       companyName: businessName,
       email,
-      phone: phone || '',
+      phone: normalizedPhone,
       website,
-      adBudget: budget,
-      mainChallenge: challenge,
       source: 'adsarchitect.agency',
       tags: ['audit-request', 'lead-site'],
+      customField: {
+        adbudget: budget,
+        mainchallenge: challenge,
+      },
     };
 
     const ghlRes = await fetch(GHL_WEBHOOK_URL, {
