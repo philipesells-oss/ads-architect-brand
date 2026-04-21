@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const GHL_WEBHOOK_URL =
-  'https://services.leadconnectorhq.com/hooks/LBQUZIREDdmwChWAX8Yl/webhook-trigger/955ddd5c-534c-4943-b010-6675abd1a2f3';
+const GHL_API_BASE = 'https://services.leadconnectorhq.com';
+const GHL_API_VERSION = '2021-07-28';
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,36 +12,49 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Normalize phone to E.164 format (remove spaces, dashes, parens)
-    const normalizedPhone = phone ? phone.replace(/[\s\-().]/g, '') : '';
+    const apiKey = process.env.GHL_API_KEY;
+    const locationId = process.env.GHL_LOCATION_ID;
+
+    if (!apiKey || !locationId) {
+      throw new Error('GHL credentials not configured');
+    }
+
+    // Normalize phone to E.164 (remove spaces, dashes, parens)
+    const normalizedPhone = phone ? phone.replace(/[\s\-().]/g, '') : undefined;
 
     const payload = {
+      locationId,
       firstName,
       companyName: businessName,
       email,
-      phone: normalizedPhone,
+      ...(normalizedPhone && { phone: normalizedPhone }),
       website,
       source: 'adsarchitect.agency',
       tags: ['audit-request', 'lead-site'],
-      customField: {
-        adbudget: budget,
-        mainchallenge: challenge,
-      },
+      customFields: [
+        { key: 'contact.adbudget', field_value: budget || '' },
+        { key: 'contact.mainchallenge', field_value: challenge || '' },
+      ],
     };
 
-    const ghlRes = await fetch(GHL_WEBHOOK_URL, {
+    const ghlRes = await fetch(`${GHL_API_BASE}/contacts/upsert`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+        Version: GHL_API_VERSION,
+      },
       body: JSON.stringify(payload),
     });
 
     if (!ghlRes.ok) {
-      throw new Error(`GHL webhook responded with ${ghlRes.status}`);
+      const errText = await ghlRes.text();
+      throw new Error(`GHL API responded with ${ghlRes.status}: ${errText}`);
     }
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error('[audit] webhook error:', err);
+    console.error('[audit] GHL error:', err);
     return NextResponse.json({ error: 'Submission failed. Please try again.' }, { status: 500 });
   }
 }
