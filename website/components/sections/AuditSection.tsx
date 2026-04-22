@@ -5,23 +5,13 @@ import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle2, Clock, FileText, Loader2, Video } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PhoneInput } from '@/components/ui/PhoneInput';
+import { useT } from '@/lib/i18n/context';
 
-const deliverables = [
-  { icon: FileText, label: 'Ad Spend Waste Report', desc: 'Where your budget is leaking and why' },
-  { icon: FileText, label: 'Conversion Gaps Analysis', desc: "Why clicks aren't turning into bookings" },
-  { icon: FileText, label: 'Competitive Positioning Brief', desc: 'How you compare to top 3 competitors' },
-  { icon: CheckCircle2, label: 'Acquisition Stack Recommendation', desc: "The exact system we'd build for you" },
-  { icon: Video, label: 'Private 30-Min Strategy Call', desc: 'Walkthrough with your dedicated specialist' },
-];
-
-const requirements = [
-  'Spending $500+/month on paid ads',
-  'Hotel, spa, or wellness brand with a team',
-  'Ready to treat marketing as infrastructure',
-  'Not looking for quick fixes or cheap solutions',
-];
+const deliverableIcons = [FileText, FileText, FileText, CheckCircle2, Video];
 
 export function AuditSection() {
+  const t = useT();
+  const { audit } = t;
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [phone, setPhone] = useState('');
@@ -72,22 +62,17 @@ export function AuditSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <p className="overline mb-4">Free Acquisition Audit</p>
+            <p className="overline mb-4">{audit.overline}</p>
             <h2 className="text-h2 md:text-[40px] font-bold text-snow mb-4">
-              Find Out Exactly Why Your Ads Aren&apos;t Filling Your Calendar.{' '}
-              <span className="text-teal">Free, In 48 Hours.</span>
+              {audit.h2part1}{' '}
+              <span className="text-teal">{audit.h2part2}</span>
             </h2>
-            <p className="text-body-lg text-muted mb-8">
-              We&apos;ll audit your current ad accounts, identify the exact gaps in your acquisition
-              system, and show you a clear path to predictable bookings. No fluff. No sales
-              pressure. Just a real diagnosis.
-            </p>
+            <p className="text-body-lg text-muted mb-8">{audit.sub}</p>
 
-            {/* Deliverables */}
             <div className="space-y-3 mb-8">
-              <p className="text-body-sm font-medium text-snow mb-3">What you receive:</p>
-              {deliverables.map((d) => {
-                const Icon = d.icon;
+              <p className="text-body-sm font-medium text-snow mb-3">{audit.whatTitle}</p>
+              {audit.deliverables.map((d, i) => {
+                const Icon = deliverableIcons[i];
                 return (
                   <div key={d.label} className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded bg-teal-muted flex items-center justify-center flex-shrink-0">
@@ -102,26 +87,22 @@ export function AuditSection() {
               })}
             </div>
 
-            {/* Timing */}
             <div className="flex items-center gap-2 text-body-sm text-muted">
               <Clock size={14} className="text-teal" />
-              <span>Delivered within 48 hours of intake submission</span>
+              <span>{audit.timing}</span>
             </div>
 
-            {/* Who it's for */}
             <div className="mt-8 pt-6 border-t border-border">
-              <p className="text-body-sm font-medium text-snow mb-3">Who this is for:</p>
+              <p className="text-body-sm font-medium text-snow mb-3">{audit.whoTitle}</p>
               <ul className="space-y-2">
-                {requirements.map((r) => (
+                {audit.requirements.map((r) => (
                   <li key={r} className="flex items-start gap-2 text-body-sm text-muted">
                     <CheckCircle2 size={14} className="text-teal mt-0.5 flex-shrink-0" />
                     {r}
                   </li>
                 ))}
               </ul>
-              <p className="mt-3 text-body-sm text-faint italic">
-                We review every application. We only take clients we can genuinely help.
-              </p>
+              <p className="mt-3 text-body-sm text-faint italic">{audit.footnote}</p>
             </div>
           </motion.div>
 
@@ -138,93 +119,58 @@ export function AuditSection() {
                 <div className="w-16 h-16 rounded-full bg-teal/10 border border-teal/30 flex items-center justify-center mb-6">
                   <CheckCircle2 size={32} className="text-teal" />
                 </div>
-                <h3 className="text-h4 font-semibold text-snow mb-2">You&apos;re In</h3>
-                <p className="text-body-sm text-muted max-w-xs">
-                  Your audit request is confirmed. We&apos;ll reach out within 24 hours to schedule
-                  your strategy call.
-                </p>
+                <h3 className="text-h4 font-semibold text-snow mb-2">{audit.successTitle}</h3>
+                <p className="text-body-sm text-muted max-w-xs">{audit.successMsg}</p>
               </div>
             ) : (
               <>
-                <h3 className="text-h4 font-semibold text-snow mb-1">Claim Your Free Audit</h3>
-                <p className="text-body-sm text-muted mb-6">
-                  We&apos;ll reach out within 24 hours to schedule your strategy call.
-                </p>
+                <h3 className="text-h4 font-semibold text-snow mb-1">{audit.formTitle}</h3>
+                <p className="text-body-sm text-muted mb-6">{audit.formSub}</p>
 
                 <form className="space-y-4" onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-caption text-muted mb-1.5 block">First Name *</label>
-                      <input
-                        name="firstName"
-                        type="text"
-                        required
-                        placeholder="Your name"
-                        className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow placeholder-faint focus:outline-none focus:border-teal/50 transition-colors duration-200"
-                      />
+                      <label className="text-caption text-muted mb-1.5 block">{audit.labels.firstName}</label>
+                      <input name="firstName" type="text" required placeholder={audit.placeholders.firstName}
+                        className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow placeholder-faint focus:outline-none focus:border-teal/50 transition-colors duration-200" />
                     </div>
                     <div>
-                      <label className="text-caption text-muted mb-1.5 block">Business Name *</label>
-                      <input
-                        name="businessName"
-                        type="text"
-                        required
-                        placeholder="Your business"
-                        className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow placeholder-faint focus:outline-none focus:border-teal/50 transition-colors duration-200"
-                      />
+                      <label className="text-caption text-muted mb-1.5 block">{audit.labels.businessName}</label>
+                      <input name="businessName" type="text" required placeholder={audit.placeholders.businessName}
+                        className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow placeholder-faint focus:outline-none focus:border-teal/50 transition-colors duration-200" />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-caption text-muted mb-1.5 block">Business Website *</label>
-                    <input
-                      name="website"
-                      type="url"
-                      required
-                      placeholder="https://yourbusiness.com"
-                      className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow placeholder-faint focus:outline-none focus:border-teal/50 transition-colors duration-200"
-                    />
+                    <label className="text-caption text-muted mb-1.5 block">{audit.labels.website}</label>
+                    <input name="website" type="url" required placeholder={audit.placeholders.website}
+                      className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow placeholder-faint focus:outline-none focus:border-teal/50 transition-colors duration-200" />
                   </div>
 
                   <div>
-                    <label className="text-caption text-muted mb-1.5 block">Monthly Ad Budget *</label>
-                    <select
-                      name="budget"
-                      required
-                      className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow focus:outline-none focus:border-teal/50 transition-colors duration-200 appearance-none"
-                    >
-                      <option value="">Select budget range</option>
-                      <option value="$500–$1,000/month">$500 – $1,000/month</option>
-                      <option value="$1,000–$2,000/month">$1,000 – $2,000/month</option>
-                      <option value="$2,000–$5,000/month">$2,000 – $5,000/month</option>
-                      <option value="$5,000+/month">$5,000+/month</option>
+                    <label className="text-caption text-muted mb-1.5 block">{audit.labels.budget}</label>
+                    <select name="budget" required
+                      className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow focus:outline-none focus:border-teal/50 transition-colors duration-200 appearance-none">
+                      {audit.budgetOptions.map((opt, i) => (
+                        <option key={i} value={i === 0 ? '' : opt}>{opt}</option>
+                      ))}
                     </select>
                   </div>
 
                   <div>
-                    <label className="text-caption text-muted mb-1.5 block">Main Challenge *</label>
-                    <select
-                      name="challenge"
-                      required
-                      className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow focus:outline-none focus:border-teal/50 transition-colors duration-200 appearance-none"
-                    >
-                      <option value="">Select your challenge</option>
-                      <option value="Inconsistent bookings / appointments">Inconsistent bookings / appointments</option>
-                      <option value="High cost per acquisition">High cost per acquisition</option>
-                      <option value="No system connecting ads to bookings">No system connecting ads to bookings</option>
-                      <option value="Want to scale but don't know how">Want to scale but don&apos;t know how</option>
+                    <label className="text-caption text-muted mb-1.5 block">{audit.labels.challenge}</label>
+                    <select name="challenge" required
+                      className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow focus:outline-none focus:border-teal/50 transition-colors duration-200 appearance-none">
+                      {audit.challengeOptions.map((opt, i) => (
+                        <option key={i} value={i === 0 ? '' : opt}>{opt}</option>
+                      ))}
                     </select>
                   </div>
 
                   <div>
-                    <label className="text-caption text-muted mb-1.5 block">Work Email *</label>
-                    <input
-                      name="email"
-                      type="email"
-                      required
-                      placeholder="you@yourbusiness.com"
-                      className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow placeholder-faint focus:outline-none focus:border-teal/50 transition-colors duration-200"
-                    />
+                    <label className="text-caption text-muted mb-1.5 block">{audit.labels.email}</label>
+                    <input name="email" type="email" required placeholder={audit.placeholders.email}
+                      className="w-full bg-carbon border border-border rounded px-4 py-3 text-body text-snow placeholder-faint focus:outline-none focus:border-teal/50 transition-colors duration-200" />
                   </div>
 
                   <div>
@@ -242,28 +188,15 @@ export function AuditSection() {
                     </p>
                   )}
 
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full mt-2"
-                    disabled={status === 'loading'}
-                  >
+                  <Button type="submit" size="lg" className="w-full mt-2" disabled={status === 'loading'}>
                     {status === 'loading' ? (
-                      <>
-                        <Loader2 size={18} className="mr-2 animate-spin" />
-                        Sending...
-                      </>
+                      <><Loader2 size={18} className="mr-2 animate-spin" />{audit.loadingBtn}</>
                     ) : (
-                      <>
-                        Claim Your Free Audit
-                        <ArrowRight size={18} className="ml-2" />
-                      </>
+                      <>{audit.submitBtn}<ArrowRight size={18} className="ml-2" /></>
                     )}
                   </Button>
 
-                  <p className="text-caption text-faint text-center">
-                    No sales pressure. Real diagnosis only. We respond within 24 hours.
-                  </p>
+                  <p className="text-caption text-faint text-center">{audit.formFootnote}</p>
                 </form>
               </>
             )}

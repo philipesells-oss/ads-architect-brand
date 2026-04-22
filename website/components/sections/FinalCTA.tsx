@@ -3,11 +3,14 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useT } from '@/lib/i18n/context';
 
 export function FinalCTA() {
+  const t = useT();
+  const { finalCta } = t;
+
   return (
     <section className="section-divider py-32 px-5 md:px-10 relative overflow-hidden">
-      {/* Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-teal/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="relative max-w-3xl mx-auto text-center">
@@ -18,7 +21,7 @@ export function FinalCTA() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          Ready?
+          {finalCta.overline}
         </motion.p>
 
         <motion.h2
@@ -28,8 +31,8 @@ export function FinalCTA() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          Ready to Build Your{' '}
-          <span className="text-teal">Acquisition System?</span>
+          {finalCta.h2part1}{' '}
+          <span className="text-teal">{finalCta.h2part2}</span>
         </motion.h2>
 
         <motion.p
@@ -39,8 +42,7 @@ export function FinalCTA() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          Book your free Acquisition Audit. We&apos;ll show you exactly where revenue
-          is being left on the table — and what we&apos;d build to recover it.
+          {finalCta.sub}
         </motion.p>
 
         <motion.div
@@ -51,12 +53,10 @@ export function FinalCTA() {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <Button as="a" href="#audit" size="lg">
-            Book Your Free Audit
+            {finalCta.btn}
             <ArrowRight size={18} className="ml-2" />
           </Button>
-          <span className="text-body-sm text-faint">
-            48 hours · No sales pressure · Real diagnosis
-          </span>
+          <span className="text-body-sm text-faint">{finalCta.note}</span>
         </motion.div>
       </div>
     </section>

@@ -1,19 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { clsx } from 'clsx';
-
-const navLinks = [
-  { label: 'Services', href: '#services' },
-  { label: 'Case Studies', href: '#cases' },
-  { label: 'About', href: '#about' },
-];
+import { useT } from '@/lib/i18n/context';
 
 export function Navbar() {
+  const t = useT();
+  const pathname = usePathname();
+  const locale = pathname.split('/')[1] || 'en';
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const navLinks = [
+    { label: t.navbar.links[0], href: '#services' },
+    { label: t.navbar.links[1], href: '#cases' },
+    { label: t.navbar.links[2], href: `/${locale}/about` },
+  ];
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 80);
@@ -55,7 +60,7 @@ export function Navbar() {
           {/* CTA */}
           <div className="hidden md:block">
             <Button as="a" href="#audit" size="sm">
-              Book Free Audit
+              {t.navbar.cta}
             </Button>
           </div>
 
@@ -84,7 +89,7 @@ export function Navbar() {
             </a>
           ))}
           <Button as="a" href="#audit" size="lg" onClick={() => setMenuOpen(false)}>
-            Book Free Audit
+            {t.navbar.cta}
           </Button>
         </div>
       )}

@@ -1,12 +1,17 @@
-import { Linkedin } from 'lucide-react';
+'use client';
 
-const footerLinks = [
-  { label: 'Services', href: '#services' },
-  { label: 'Case Studies', href: '#cases' },
-  { label: 'Free Audit', href: '#audit' },
-];
+import { Linkedin } from 'lucide-react';
+import { useT } from '@/lib/i18n/context';
 
 export function Footer() {
+  const t = useT();
+
+  const footerLinks = [
+    { label: t.footer.links[0], href: '#services' },
+    { label: t.footer.links[1], href: '#cases' },
+    { label: t.footer.links[2], href: '#audit' },
+  ];
+
   return (
     <footer className="border-t border-border py-10 px-5 md:px-10 bg-carbon">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
@@ -40,7 +45,7 @@ export function Footer() {
             <Linkedin size={18} />
           </a>
           <span className="text-caption text-faint">
-            &copy; {new Date().getFullYear()} ADS Architect. All rights reserved.
+            &copy; {new Date().getFullYear()} ADS Architect. {t.footer.copyright}
           </span>
         </div>
       </div>
